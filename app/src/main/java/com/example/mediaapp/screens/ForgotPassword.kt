@@ -35,47 +35,29 @@ fun ForgotPasswordPageLayout(navController: NavController,
         modifier = Modifier
             .fillMaxSize()
             .background(
-                colorResource(R.color.login_background_color)
+                MaterialTheme.colorScheme.surface
             )
     ) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp),
-            contentAlignment = Alignment.Center) {
-            Text(
-                stringResource(R.string.login_top_name),
-                fontSize = 22.sp,
-                lineHeight = 28.sp,
-                color = Color.White,
-                textAlign = TextAlign.Center
-            )
-        }
-        Text(
-            "Feature coming soon! can't reset password yet.",
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.titleSmall,
-            modifier = Modifier.padding(start = 10.dp, top = 5.dp)
-        )
+        HeaderText(stringResource(R.string.login_top_name))
         MainTitleText(R.string.login_forgot_password)
         SubTitleText(R.string.login_forgot_password_please)
-        TextfieldForEmail(viewModel)
+        TextFieldForInput(viewModel, InputType.Email)
         Button(onClick = {
-            navController.navigate(Screen.Login.route)
+            viewModel.sendPasswordResetEmail(navController)
         },
             modifier = Modifier
                 .wrapContentSize()
                 .padding(top = 36.dp, end = 29.dp)
                 .align(Alignment.End),
             colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(R.color.login_button)
+                containerColor = MaterialTheme.colorScheme.primaryContainer
             )
         ) {
             Text(
                 stringResource(R.string.login_forgot_password_reset),
-                color = colorResource(R.color.login_button_text)
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
-
         BottomSignText(R.string.login_already_account, R.string.login_already_account_sign, navController)
     }
 }
