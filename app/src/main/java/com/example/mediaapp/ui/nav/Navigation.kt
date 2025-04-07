@@ -148,7 +148,7 @@ fun TopNavBarA(drawerState: DrawerState) {
     val scope = rememberCoroutineScope()
 
     TopAppBar(
-        colors = TopAppBarDefaults.smallTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = containerColor,
             titleContentColor = contentColor,
             navigationIconContentColor = iconColor,
@@ -190,7 +190,7 @@ fun TopNavBarB(navController: NavController, drawerState: DrawerState) {
     val scope = rememberCoroutineScope()
 
     CenterAlignedTopAppBar(
-        colors = TopAppBarDefaults.smallTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = containerColor,
             titleContentColor = contentColor,
             navigationIconContentColor = iconColor,
@@ -236,7 +236,7 @@ fun TopNavBarC(drawerState: DrawerState, modifier: Modifier = Modifier) {
     val scope = rememberCoroutineScope()
 
     TopAppBar(
-        colors = TopAppBarDefaults.smallTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = containerColor,
             titleContentColor = contentColor,
             navigationIconContentColor = iconColor,
@@ -292,7 +292,7 @@ fun TopNavBarD(navController: NavController, drawerState: DrawerState) {
     val scope = rememberCoroutineScope()
 
     CenterAlignedTopAppBar(
-        colors = TopAppBarDefaults.smallTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = containerColor,
             titleContentColor = contentColor,
             navigationIconContentColor = iconColor,
@@ -346,7 +346,7 @@ fun TopNavBarE(drawerState: DrawerState) {
     val scope = rememberCoroutineScope()
 
     TopAppBar(
-        colors = TopAppBarDefaults.smallTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = containerColor,
             titleContentColor = contentColor,
             navigationIconContentColor = iconColor,
@@ -388,7 +388,7 @@ fun TopNavBarF() {
     val containerColor = colorResource(R.color.top_navbar_container_color)
 
     CenterAlignedTopAppBar(
-        colors = TopAppBarDefaults.smallTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = containerColor,
         ),
         title = {

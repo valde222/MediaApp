@@ -2,13 +2,15 @@ package com.example.mediaapp.viewModels
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.mediaapp.backend.auth.AuthRepository
 import com.example.mediaapp.backend.database.DatabaseHandler
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
+import kotlinx.coroutines.launch
 
-class ProfileCustomizationViewModel : ViewModel() {
+class ProfileCustomizationViewModel(
+    private val authRepository: AuthRepository
+) : ViewModel() {
     private val databaseHandler = DatabaseHandler.getInstance()
-    val user = Firebase.auth.currentUser
 
     private var username = mutableStateOf("")
     var name = mutableStateOf("")
@@ -22,6 +24,11 @@ class ProfileCustomizationViewModel : ViewModel() {
             "location" to location.value,
             "description" to description.value
         )
-        user?.let { databaseHandler.updateUserInDatabase(it.uid, userMap) }
+        viewModelScope.launch {
+            val user = authRepository.getCurrentUser()
+
+            user?.let { databaseHandler.updateUserInDatabase(it.uid, userMap) }
+        }
+
     }
 }

@@ -90,13 +90,16 @@ fun SearchBar(
                         .fillMaxWidth()
                 )
             },
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                containerColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
                 unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
-            ),
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                unfocusedLabelColor = MaterialTheme.colorScheme.primary)
+            ,
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 8.dp)

@@ -3,20 +3,21 @@ package com.example.mediaapp.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mediaapp.R
+import com.example.mediaapp.backend.auth.AuthRepository
 import com.example.mediaapp.models.CurrentUser
 import com.example.mediaapp.backend.database.DatabaseHandler
 import com.example.mediaapp.models.Country
 import com.example.mediaapp.models.User
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class CurrentUserViewModel : ViewModel(){
+class CurrentUserViewModel(
+    private val authRepository: AuthRepository
+) : ViewModel(){
+
     private val databaseHandler = DatabaseHandler.getInstance()
-    val user = Firebase.auth.currentUser
     private val _currentUser = MutableStateFlow<CurrentUser?>(null)
     val currentUser: StateFlow<CurrentUser?> = _currentUser.asStateFlow()
 
@@ -55,6 +56,8 @@ class CurrentUserViewModel : ViewModel(){
             _currentUser.value!!.user.ratedMovies
         )
         viewModelScope.launch {
+            val user = authRepository.getCurrentUser()
+
             databaseHandler.updateUserInDatabase(
                 user!!.uid,
                 User.toMap(Tempuser)

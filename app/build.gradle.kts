@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 
@@ -13,7 +14,7 @@ android {
     defaultConfig {
         applicationId = "com.example.mediaapp"
         minSdk = 25
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -44,18 +45,18 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "21"
     }
     buildFeatures {
         compose = true
 
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
     packaging {
         resources {
@@ -68,55 +69,67 @@ android {
 
 
 
+
 dependencies {
-    // Coil
-    implementation("io.coil-kt:coil-compose:2.5.0")
 
-    // Retrofit2 for apirequests
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+    // Coroutines - Use the latest stable (e.g., 1.8.0 or 1.8.1) , remove duplicates
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
-    //coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    // Coil - Use the latest stable, remove duplicate
+    implementation("io.coil-kt:coil-compose:2.6.0") // Check for latest coil version
 
-    // Coil
-    //implementation("io.coil-kt:coil-compose:2.5.0")
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0") // 2.11.0 is latest stable
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0") // 2.11.0 is latest stable
+    implementation(platform("androidx.compose:compose-bom:2025.03.01"))
+    // ViewModel / Lifecycle Compose - Use versions from BOM or check latest
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.0") // Or rely on BOM
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0") // Or rely on BOM
 
-    // Implementations for ViewModel
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
-    //implementation("androidx.compose.runtime:runtime-livedata:2.6.2")
+    // Navigation - Use versions from BOM or check latest
+    implementation("androidx.navigation:navigation-compose:2.7.7") // Or rely on BOM
+    implementation("androidx.activity:activity-compose:1.9.0") // Or rely on BOM
 
-    //implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("androidx.navigation:navigation-runtime-ktx")
-    implementation("androidx.wear.compose:compose-material:1.2.1")
-    implementation("androidx.wear.compose:compose-material3:1.0.0-alpha15")
-    implementation ("io.coil-kt:coil-compose:2.1.0")
-    implementation("com.google.firebase:firebase-auth:22.3.0")
-    implementation("com.google.firebase:firebase-firestore:24.9.1")
-    val nav_version = "2.7.5"
-    implementation("androidx.navigation:navigation-compose:$nav_version")
-    implementation("androidx.activity:activity-compose:1.8.1")
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.activity:activity-compose:1.8.1")
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    // Core KTX - Use versions from BOM or check latest
+    implementation("androidx.core:core-ktx:1.13.1") // Or rely on BOM
+
+    // Compose BOM - Use a RECENT version
+    // Check for the latest BOM here: https://developer.android.com/jetpack/androidx/releases/compose-bom
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material3:material3:1.3.1") // Material 3 is recommended
     implementation("androidx.compose.material:material-icons-extended")
-    implementation("com.google.android.engage:engage-core:1.3.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    // Remove Wear Compose unless this is a Wear OS app? These look out of place.
+    // implementation("androidx.wear.compose:compose-material:1.4.1")
+    // implementation("androidx.wear.compose:compose-material3:1.0.0-alpha35")
+
+    // Firebase (check for latest versions if desired)
+    implementation("com.google.firebase:firebase-auth:23.0.0") // Check latest
+    implementation("com.google.firebase:firebase-firestore:25.0.0") // Check latest
+
+    // Supabase (check for latest versions)
+    implementation(platform("io.github.jan-tennert.supabase:bom:3.1.3")) // Check latest bom version
+    implementation("io.github.jan-tennert.supabase:postgrest-kt")
+    implementation("io.github.jan-tennert.supabase:auth-kt:3.1.3")
+    implementation("io.github.jan-tennert.supabase:realtime-kt")
+
+    // Other dependencies (check versions if needed)
+    implementation("com.google.android.engage:engage-core:1.5.7")
+    implementation("com.github.a914-gowtham:compose-ratingbar:1.3.4")
+
+    // Test dependencies (usually updated via BOM)
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    androidTestImplementation("androidx.test.ext:junit:1.1.5") // or 1.2.0
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1") // or 3.6.0
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.05.00")) // Match app BOM
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    //Github for ratingbar
-    implementation("com.github.a914-gowtham:compose-ratingbar:1.3.4")
+    val koinVersion = "3.5.6"
+    implementation("io.insert-koin:koin-android:$koinVersion")
+    implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
+    implementation("io.insert-koin:koin-androidx-viewmodel:$koinVersion")
 }

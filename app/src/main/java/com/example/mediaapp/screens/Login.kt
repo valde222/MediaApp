@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,19 +48,26 @@ import androidx.compose.ui.text.withStyle
 import com.example.mediaapp.ui.theme.MediaAppTheme
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.mediaapp.R
 import com.example.mediaapp.Screen
 import com.example.mediaapp.viewModels.LoginPageViewModel
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
+import androidx.compose.runtime.collectAsState
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun LoginPageLayout(navController: NavController, viewModel: LoginPageViewModel = viewModel()) {
-    if (Firebase.auth.currentUser != null) {
-        navController.navigate(Screen.MainScreen.route)
-    } else {
+fun LoginPageLayout(navController: NavController, viewModel: LoginPageViewModel = koinViewModel()) {
+
+    val authState by viewModel.authState.collectAsState(initial = null)
+
+    if (authState != null) { // If user is logged in (authState has a user object)
+        LaunchedEffect(Unit) { // Prevent multiple navigations if state recomposes quickly
+            navController.navigate(Screen.MainScreen.route) {
+                // Clear the login screen from the back stack
+                popUpTo(Screen.Login.route) { inclusive = true }
+            }
+        }
+    } else { // User is logged out, show login UI
         MediaAppTheme {
             Column(
                 modifier = Modifier
@@ -229,7 +236,6 @@ private fun placeholderStyle(text: String) = Text(
     letterSpacing = 0.5.sp
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldForInput(viewModel: LoginPageViewModel, inputType: InputType) {
     var input by remember { mutableStateOf(TextFieldValue()) }
@@ -254,11 +260,15 @@ fun TextFieldForInput(viewModel: LoginPageViewModel, inputType: InputType) {
         },
         label = { labelStyle(inputType.label) },
         placeholder = { placeholderStyle(inputType.placeholder) },
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            textColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+            focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
             focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-            unfocusedIndicatorColor = Color.Transparent),
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedLabelColor = MaterialTheme.colorScheme.primary,
+            unfocusedLabelColor = MaterialTheme.colorScheme.primary),
         keyboardOptions = KeyboardOptions(keyboardType = inputType.keyboardType),
         visualTransformation = if (inputType == InputType.Password || inputType == InputType.ConfirmPassword) {
             if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation()

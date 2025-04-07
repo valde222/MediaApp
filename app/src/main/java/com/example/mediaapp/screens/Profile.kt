@@ -669,7 +669,6 @@ private fun TextfieldForEditName(viewModel: CurrentUserViewModel) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TextfieldForEditDesc(viewModel: CurrentUserViewModel) {
     var desc by remember { mutableStateOf(TextFieldValue()) }
@@ -716,11 +715,15 @@ private fun placeholderStyle(text: String) = Text(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun textFieldColors() = TextFieldDefaults.textFieldColors(
-    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-    textColor = MaterialTheme.colorScheme.onSurfaceVariant,
+private fun textFieldColors() = TextFieldDefaults.colors(
+    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+    focusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
     focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-    unfocusedIndicatorColor = Color.Transparent
+    unfocusedIndicatorColor = Color.Transparent,
+    focusedLabelColor = MaterialTheme.colorScheme.primary,
+    unfocusedLabelColor = MaterialTheme.colorScheme.primary
 )
 
 @Composable

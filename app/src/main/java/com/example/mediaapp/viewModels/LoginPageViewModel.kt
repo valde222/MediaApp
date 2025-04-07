@@ -2,20 +2,18 @@ package com.example.mediaapp.viewModels
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.mediaapp.Screen
-import com.example.mediaapp.backend.database.DatabaseHandler
-
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
+import com.example.mediaapp.backend.auth.AuthRepository
+import com.example.mediaapp.backend.auth.AuthResult
+import kotlinx.coroutines.launch
 
 /**
  * ViewModel for the login page.
  * Handles user registration and input validation.
  */
-class LoginPageViewModel : ViewModel() {
-
-    private val databaseHandler = DatabaseHandler.getInstance()
+class LoginPageViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
     // Variables to hold user input
     var errorText = mutableStateOf("")
@@ -24,80 +22,75 @@ class LoginPageViewModel : ViewModel() {
     var confirmPassword = ""
     var username = ""
 
-    /**
-     * Handles the registration flow.
-     * Validates user input and registers the user if the input is valid.
-     */
+    val authState = authRepository.getAuthState()
+
     fun registerFlow(navController: NavController) {
         try {
             validateInput(true)
             if (errorText.value.isEmpty()) {
-                registerUser(navController)
+                viewModelScope.launch {
+                    when (val result = authRepository.registerUser(email, password, username)) {
+                        is AuthResult.Success -> {
+                            // Registration successful, navigate to login or main screen
+                            errorText.value = "User created successfully"
+                            navController.navigate(Screen.Login.route) {
+                                popUpTo(Screen.Register.route) { inclusive = true }
+                            }
+                        }
+                        is AuthResult.Error -> {
+                            // Handle specific errors if needed based on result.message
+                            errorText.value = mapFirebaseErrorToUserMessage(result.message)
+                        }
+                    }
+                }
             }
         } catch (e: IllegalArgumentException) {
-            errorText.value = e.message ?: ERROR
+            errorText.value = e.message ?: "Validation failed"
         }
     }
 
-    /**
-     * Registers the user with Firebase Authentication.
-     * If registration is successful, updates the user's profile and adds the user to the database.
-     */
-    private fun registerUser(navController: NavController) {
-        Firebase.auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                Firebase.auth.currentUser?.let { user ->
-                    // Update the user's display name
-                    user.updateProfile(com.google.firebase.auth.UserProfileChangeRequest.Builder().setDisplayName(username).build())
-                    // Add the user to the database
-                    databaseHandler.updateUserInDatabase(user.uid, createUserMap())
-                }
-                errorText.value = "User created successfully"
-                navController.navigate(Screen.Login.route)
-            } else {
-                errorText.value = when {
-                    task.exception.toString().contains("email address is badly formatted") -> ERROR_INVALID_EMAIL
-                    task.exception.toString().contains("The email address is already in use by another account") -> "This email address is already in use by another account"
-                    else -> ERROR
-                }
-            }
-        }
-    }
-
-    /**
-     * Handles the login flow.
-     * Validates user input and logs in the user if the input is valid.
-     */
     fun loginFlow(navController: NavController) {
         try {
             validateInput(false)
             if (errorText.value.isEmpty()) {
-                loginUser(navController)
+                viewModelScope.launch {
+                    when (val result = authRepository.loginUser(email, password)) {
+                        is AuthResult.Success -> {
+                            // Login successful, navigate to main screen
+                            errorText.value = ""
+                            navController.navigate(Screen.MainScreen.route) {
+                                popUpTo(Screen.Login.route) { inclusive = true }
+                            }
+                        }
+                        is AuthResult.Error -> {
+                            errorText.value = mapFirebaseErrorToUserMessage(result.message)
+                        }
+                    }
+                }
             }
         } catch (e: IllegalArgumentException) {
-            errorText.value = e.message ?: ERROR
+            errorText.value = e.message ?: "Validation failed"
         }
     }
 
-    /**
-     * Logs in the user with Firebase Authentication.
-     * If login is successful, clears the error text. Otherwise, sets the error text to an appropriate error message.
-     */
-    private fun loginUser(navController: NavController) {
-        Firebase.auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                errorText.value = ""
-                navController.navigate(Screen.MainScreen.route)
-            } else {
-                errorText.value = when {
-                    task.exception.toString().contains("email address is badly formatted") -> ERROR_INVALID_EMAIL
-                    task.exception.toString().contains("supplied auth credential is incorrect") -> "The email or password is incorrect"
-                    task.exception.toString().contains("Access to this account has been temporarily disabled due to many failed login attempts") -> "Too many failed login attempts for this account. Please try again later"
-                    else -> ERROR
+    fun sendPasswordResetEmail(navController: NavController) {
+        if (email.isEmpty()) {
+            errorText.value = ERROR_EMPTY_FIELDS
+        } else {
+            viewModelScope.launch {
+                when(val result = authRepository.sendPasswordReset(email)) {
+                    is AuthResult.Success -> {
+                        errorText.value = "Password reset email sent"
+                        navController.navigate(Screen.Login.route)
+                    }
+                    is AuthResult.Error -> {
+                        errorText.value = mapFirebaseErrorToUserMessage(result.message)
+                    }
                 }
             }
         }
     }
+
 
     companion object {
         const val ERROR_EMPTY_FIELDS = "Please fill in all fields"
@@ -122,39 +115,15 @@ class LoginPageViewModel : ViewModel() {
         errorText.value = ""
     }
 
-    fun sendPasswordResetEmail(navController: NavController) {
-        if (email.isEmpty()) {
-            errorText.value = ERROR_EMPTY_FIELDS
-        } else {
-            Firebase.auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    errorText.value = "Password reset email sent"
-                    navController.navigate(Screen.Login.route)
-                } else {
-                    errorText.value = when {
-                        task.exception.toString().contains("email address is badly formatted") -> ERROR_INVALID_EMAIL
-                        task.exception.toString().contains("There is no user record corresponding to this identifier") -> "There is no user record corresponding to this email address"
-                        else -> ERROR
-                    }
-                }
-            }
+    private fun mapFirebaseErrorToUserMessage(firebaseError: String): String {
+        return when {
+            firebaseError.contains("ERROR_INVALID_EMAIL", ignoreCase = true) || firebaseError.contains("email address is badly formatted", ignoreCase = true) -> ERROR_INVALID_EMAIL
+            firebaseError.contains("ERROR_WRONG_PASSWORD", ignoreCase = true) || firebaseError.contains("supplied auth credential is incorrect", ignoreCase = true) -> "The email or password is incorrect"
+            firebaseError.contains("ERROR_USER_NOT_FOUND", ignoreCase = true) || firebaseError.contains("no user record", ignoreCase = true) -> "No account found with this email"
+            firebaseError.contains("ERROR_EMAIL_ALREADY_IN_USE", ignoreCase = true) || firebaseError.contains("email address is already in use", ignoreCase = true) -> "This email address is already in use"
+            firebaseError.contains("ERROR_WEAK_PASSWORD", ignoreCase = true) -> ERROR_SHORT_PASSWORD // Firebase might have a different message
+            firebaseError.contains("temporarily disabled", ignoreCase = true) -> "Too many failed login attempts. Please try again later or reset your password."
+            else -> firebaseError // Return the original error if not mapped
         }
     }
-    private fun createUserMap() = hashMapOf(
-        "username" to username,
-        "name" to "",
-        "location" to "",
-        "followers" to listOf<String>(),
-        "following" to listOf<String>(),
-        "description" to "",
-        "profilePicture" to "",
-        "stats" to hashMapOf(
-            "watched" to 0,
-            "reviews" to 0,
-            "rated" to 0,
-            "recommends" to 0,
-            "saved" to 0
-        ),
-        "watchlist" to listOf<String>()
-    )
 }

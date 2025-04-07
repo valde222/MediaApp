@@ -212,9 +212,9 @@ fun MainPageLayout(viewModel: HomeViewModel = viewModel(), navController: NavCon
                         IconButton(
                             onClick = {
                                 scope.launch {
-                                    if (pageCount > 1) {
+                                    if (pageCount > 0) {
                                         pagerState.animateScrollToPage(
-                                            (pagerState.currentPage - 1 + pageCount) % pageCount
+                                            (pagerState.currentPage + 1) % pageCount
                                         )
                                     }
                                 }
