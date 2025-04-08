@@ -5,12 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mediaapp.backend.auth.AuthRepository
 import com.example.mediaapp.backend.database.DatabaseHandler
+import com.example.mediaapp.backend.database.DatabaseRepository
 import kotlinx.coroutines.launch
 
 class ProfileCustomizationViewModel(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val databaseRepository: DatabaseRepository
 ) : ViewModel() {
-    private val databaseHandler = DatabaseHandler.getInstance()
 
     private var username = mutableStateOf("")
     var name = mutableStateOf("")
@@ -27,7 +28,7 @@ class ProfileCustomizationViewModel(
         viewModelScope.launch {
             val user = authRepository.getCurrentUser()
 
-            user?.let { databaseHandler.updateUserInDatabase(it.uid, userMap) }
+            user?.let { databaseRepository.updateUserProfile(it.uid, userMap) }
         }
 
     }

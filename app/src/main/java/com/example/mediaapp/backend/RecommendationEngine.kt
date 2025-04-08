@@ -2,17 +2,18 @@ package com.example.mediaapp.backend
 
 import android.util.Log
 import com.example.mediaapp.backend.apirequests.APIHandler
-import com.example.mediaapp.backend.database.DatabaseHandler
+import com.example.mediaapp.backend.database.DatabaseRepository
 import com.example.mediaapp.models.Recommend
 import com.example.mediaapp.models.WatchlistMovie
 
-class RecommendationEngine {
+class RecommendationEngine(
+    private val databaseRepository: DatabaseRepository
+) {
     private val api = APIHandler()
-    private val database = DatabaseHandler.getInstance()
     suspend fun generateMovieSuggestions(movieID: String) {
         Log.w("FUNCTION CALL", "generateMovieSuggestions()")
         val response = api.getMovieSuggestions(movieID)
-        val watchlist = database.getWatchlistMovies()
+        val watchlist = databaseRepository.getWatchlistMovies()
         if (response != null && response.total_results > 0) {
             var i = 0
             var counter = 0
@@ -24,7 +25,7 @@ class RecommendationEngine {
                         "posterPath" to response.results[counter].poster_path,
                         "title" to response.results[counter].title
                     )
-                    database.updateRecommendDatabase(hash)
+                    databaseRepository.addRecommendedMovie(hash)
                     i++
                     Log.w("DATABASE CALL", "Added movie to recommendations!")
                 }
@@ -42,15 +43,15 @@ class RecommendationEngine {
      */
 
     suspend fun getRecommendMovies() : List<Recommend> {
-        var response = database.getRecommendMovies()
+        var response = databaseRepository.getRecommendedMovies()
         if (response.size < 5) {
             return emptyList()
         }
-        return database.getRecommendMovies()
+        return databaseRepository.getRecommendedMovies()
     }
 
     suspend fun removeRecommendMovie(movieID: Long) {
-        database.removeMovieRecommend(movieID)
+        databaseRepository.removeRecommendedMovie(movieID)
     }
 
 
@@ -64,7 +65,7 @@ class RecommendationEngine {
     }
 
     suspend fun containMovieId(movieID: Long) : Boolean {
-        val watchlist = database.getWatchlistMovies()
+        val watchlist = databaseRepository.getWatchlistMovies()
         watchlist.forEach {item ->
             if(item.movieID == movieID) {
                 return true

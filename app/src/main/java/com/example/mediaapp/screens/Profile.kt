@@ -61,7 +61,6 @@ import com.example.mediaapp.ui.nav.TopNavBarA
 import com.example.mediaapp.ui.theme.MediaAppTheme
 import com.example.mediaapp.viewModels.CurrentUserViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfilePageLayout(
     navController: NavController,

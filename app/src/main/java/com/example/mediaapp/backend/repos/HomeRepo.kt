@@ -7,9 +7,10 @@ import com.example.mediaapp.models.Recommend
 import com.example.mediaapp.models.Result2
 import com.example.mediaapp.models.TMDBMovie
 
-class HomeRepo private constructor() {
+class HomeRepo(
+    private val recommendationEngine: RecommendationEngine
+) {
     private val apiHandler = APIHandler()
-    private val algorithm = RecommendationEngine()
     private var popularMoviesCache: List<TMDBMovie>? = null
     private var moviesInTheatreCache: List<Result2>? = null
     private var upcomingMoviesCache: List<Result2>? = null
@@ -64,25 +65,13 @@ class HomeRepo private constructor() {
 
     suspend fun getRecommendMovies(): Result<List<Recommend>> {
         return try {
-            var response = algorithm.getRecommendMovies()
+            var response = recommendationEngine.getRecommendMovies()
             response = response.shuffled()
             response = response.take(15)
             Log.w("DATABASE CALL VIEWMODEL", "getRecommendMovies() Called!")
             Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)
-        }
-    }
-
-    companion object {
-        @Volatile
-        private var INSTANCE: HomeRepo? = null
-        fun getInstance(): HomeRepo {
-            return INSTANCE ?: synchronized(this) {
-                val instance = HomeRepo()
-                INSTANCE = instance
-                instance
-            }
         }
     }
 

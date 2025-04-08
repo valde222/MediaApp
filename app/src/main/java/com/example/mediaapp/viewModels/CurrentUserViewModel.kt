@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.mediaapp.R
 import com.example.mediaapp.backend.auth.AuthRepository
 import com.example.mediaapp.models.CurrentUser
-import com.example.mediaapp.backend.database.DatabaseHandler
+import com.example.mediaapp.backend.database.DatabaseRepository
 import com.example.mediaapp.models.Country
 import com.example.mediaapp.models.User
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,10 +14,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class CurrentUserViewModel(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val databaseRepository: DatabaseRepository
 ) : ViewModel(){
 
-    private val databaseHandler = DatabaseHandler.getInstance()
     private val _currentUser = MutableStateFlow<CurrentUser?>(null)
     val currentUser: StateFlow<CurrentUser?> = _currentUser.asStateFlow()
 
@@ -28,7 +28,7 @@ class CurrentUserViewModel(
 
     fun getCurrentUser() {
         viewModelScope.launch {
-            _currentUser.value = databaseHandler.getUserFromDatabase()
+            _currentUser.value = databaseRepository.getUserProfile()
         }
     }
 
@@ -58,7 +58,7 @@ class CurrentUserViewModel(
         viewModelScope.launch {
             val user = authRepository.getCurrentUser()
 
-            databaseHandler.updateUserInDatabase(
+            databaseRepository.updateUserProfile(
                 user!!.uid,
                 User.toMap(Tempuser)
             )

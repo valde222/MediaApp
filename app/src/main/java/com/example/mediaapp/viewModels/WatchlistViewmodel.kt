@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mediaapp.backend.database.DatabaseHandler
+import com.example.mediaapp.backend.database.DatabaseRepository
 import com.example.mediaapp.backend.sorting.SortingHandler
 import com.example.mediaapp.models.WatchlistMovie
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,8 +12,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class WatchlistViewModel : ViewModel() {
-    private val databaseHandler = DatabaseHandler.getInstance()
+class WatchlistViewModel(
+    private val databaseRepository: DatabaseRepository
+) : ViewModel() {
 
     private val _originalWatchlist = MutableStateFlow<List<WatchlistMovie>?>(null)
 
@@ -26,7 +28,7 @@ class WatchlistViewModel : ViewModel() {
 
     fun getWatchlistMovies() {
         viewModelScope.launch {
-            val watchlist = databaseHandler.getWatchlistMovies()
+            val watchlist = this@WatchlistViewModel.databaseRepository.getWatchlistMovies()
             _originalWatchlist.value = watchlist
             _filteredWatchList.value = watchlist
             Log.w("DATABASE CALL", "getWatchlistMovies() Called!")
@@ -38,8 +40,8 @@ class WatchlistViewModel : ViewModel() {
 
     fun removeMovieFromWatchlist(movieID: Long) {
         viewModelScope.launch {
-            databaseHandler.removeMovieFromWatchlist(movieID)
-            val watchlist = databaseHandler.getWatchlistMovies()
+            this@WatchlistViewModel.databaseRepository.removeWatchlistMovie(movieID)
+            val watchlist = this@WatchlistViewModel.databaseRepository.getWatchlistMovies()
             _originalWatchlist.value = watchlist
             _filteredWatchList.value = watchlist
         }

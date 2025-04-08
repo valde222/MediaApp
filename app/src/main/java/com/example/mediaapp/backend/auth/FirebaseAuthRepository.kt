@@ -1,6 +1,6 @@
 package com.example.mediaapp.backend.auth
 
-import com.example.mediaapp.backend.database.DatabaseHandler
+import com.example.mediaapp.backend.database.DatabaseRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.ktx.auth
@@ -12,7 +12,7 @@ import kotlinx.coroutines.tasks.await
 
 class FirebaseAuthRepository(
     private val firebaseAuth: FirebaseAuth = Firebase.auth,
-    private val databaseHandler: DatabaseHandler = DatabaseHandler.getInstance()
+    private val databaseRepository: DatabaseRepository
 ) : AuthRepository {
 
     override fun getAuthState(): Flow<AuthUser?> = callbackFlow {
@@ -50,7 +50,7 @@ class FirebaseAuthRepository(
                 firebaseUser.updateProfile(profileUpdates).await()
 
                 val userMap = createUserMap(username)
-                databaseHandler.updateUserInDatabase(firebaseUser.uid, userMap)
+                databaseRepository.updateUserProfile(firebaseUser.uid, userMap)
 
                 firebaseUser.toAuthUser()?.let {
                     AuthResult.Success(it)

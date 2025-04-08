@@ -1,3 +1,5 @@
+package com.example.mediaapp.viewModels
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mediaapp.models.Recommend
@@ -9,11 +11,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class HomeViewModel(): ViewModel() {
+class HomeViewModel(
+    private val homeRepo: HomeRepo
+): ViewModel() {
 
     //private val apiHandler = APIHandler()
     //private val algorithm = RecommendationEngine()
-    private val Repo = HomeRepo.getInstance()
 
     //States for pager
     private val _popularMovies = MutableStateFlow<List<TMDBMovie>>(emptyList())
@@ -40,7 +43,7 @@ class HomeViewModel(): ViewModel() {
 
     fun fetchPopularMovies() {
         viewModelScope.launch {
-            Repo.getPopularMovies("week").also { result ->
+            homeRepo.getPopularMovies("week").also { result ->
                 result.onSuccess { movies ->
                     if (movies != null) {
                         _popularMovies.value = movies
@@ -54,7 +57,7 @@ class HomeViewModel(): ViewModel() {
 
     fun fetchRecommendedMovies() {
         viewModelScope.launch {
-            Repo.getRecommendMovies().also { result ->
+            homeRepo.getRecommendMovies().also { result ->
                 result.onSuccess { movies ->
                     _recommendedMovies.value = movies
                 }.onFailure { throwable ->
@@ -66,7 +69,7 @@ class HomeViewModel(): ViewModel() {
 
     fun fetchMoviesInTheatre() {
         viewModelScope.launch {
-            Repo.getMoviesInTheatre().also { result ->
+            homeRepo.getMoviesInTheatre().also { result ->
                 result.onSuccess { movies ->
                     if (movies != null) {
                         _inTheatres.value = movies
@@ -79,7 +82,7 @@ class HomeViewModel(): ViewModel() {
     }
     fun fetchUpcomingMovies() {
         viewModelScope.launch {
-            Repo.getUpcomingMovies().also { result ->
+            homeRepo.getUpcomingMovies().also { result ->
                 result.onSuccess { movies ->
                     if (movies != null) {
                         _upComingMovies.value = movies
