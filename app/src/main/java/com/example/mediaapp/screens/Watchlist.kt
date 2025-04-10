@@ -18,13 +18,15 @@ import com.example.mediaapp.ui.MovieListLayout
 import com.example.mediaapp.ui.TabsAndFilters
 import com.example.mediaapp.ui.nav.TopNavBarA
 import com.example.mediaapp.viewModels.WatchlistViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WatchlistPage(
     navController: NavController,
     drawerState: DrawerState,
-    viewModel: WatchlistViewModel = viewModel()) {
+    viewModel: WatchlistViewModel = koinViewModel()
+) {
 
     val watchlistMovies = viewModel.filteredWatchList.collectAsState()
     val listOfGenres: List<String> = listOf(

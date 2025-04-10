@@ -58,10 +58,11 @@ import com.example.mediaapp.backend.apirequests.APIHandler
 import com.example.mediaapp.ui.theme.MediaAppTheme
 import kotlinx.coroutines.launch
 import com.example.mediaapp.ui.StandardBoxInRow
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun MainPageLayout(viewModel: HomeViewModel = viewModel(), navController: NavController, drawerState: DrawerState) {
+fun MainPageLayout(viewModel: HomeViewModel = koinViewModel(), navController: NavController, drawerState: DrawerState) {
     val scope = rememberCoroutineScope()
     val popularMovies by viewModel.popularMovies.collectAsState()
     val recommendedMovies by viewModel.recommendedMovies.collectAsState()

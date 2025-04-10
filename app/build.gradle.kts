@@ -131,5 +131,6 @@ dependencies {
     implementation(project.dependencies.platform("io.insert-koin:koin-bom:4.0.4"))
     implementation("io.insert-koin:koin-android")
     implementation("io.insert-koin:koin-androidx-compose")
+    implementation("io.insert-koin:koin-androidx-navigation")
 
 }

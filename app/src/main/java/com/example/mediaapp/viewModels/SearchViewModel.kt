@@ -1,3 +1,4 @@
+package com.example.mediaapp.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,10 +9,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class SearchViewModel : ViewModel() {
-
-    private val apiHandler = APIHandler()
-    private val searchRepository = SearchRepository(apiHandler)
+class SearchViewModel(
+    private val searchRepository: SearchRepository
+) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String?> = _searchQuery

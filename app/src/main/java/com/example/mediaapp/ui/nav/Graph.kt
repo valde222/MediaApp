@@ -47,7 +47,7 @@ fun NavigationGraph(navController: NavHostController, loginNavController: NavCon
             SearchPage(navController = navController, drawerState = drawerState)
         }
         composable(route = Screen.Profile.route) {
-            ProfilePageLayout(navController = navController, drawerState = drawerState)
+            ProfilePageLayout( drawerState = drawerState)
         }
         composable(route = Screen.YouFollow.route) {
             YoufollowPageLayout(navController = navController, drawerState = drawerState)

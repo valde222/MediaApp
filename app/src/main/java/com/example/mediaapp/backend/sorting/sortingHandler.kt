@@ -1,6 +1,5 @@
 package com.example.mediaapp.backend.sorting
 
-
 import com.example.mediaapp.models.WatchlistMovie
 
 class SortingHandler {

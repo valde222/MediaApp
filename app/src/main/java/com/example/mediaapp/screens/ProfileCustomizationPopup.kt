@@ -7,9 +7,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mediaapp.viewModels.ProfileCustomizationViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ProfileCustomizationPopup(viewModel: ProfileCustomizationViewModel = viewModel(), openDialog: Boolean, closeDialog: () -> Unit) {
+fun ProfileCustomizationPopup(viewModel: ProfileCustomizationViewModel = koinViewModel(), openDialog: Boolean, closeDialog: () -> Unit) {
     if (openDialog) {
         AlertDialog(
             onDismissRequest = { closeDialog() },

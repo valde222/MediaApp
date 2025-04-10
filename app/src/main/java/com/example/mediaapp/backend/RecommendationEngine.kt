@@ -7,12 +7,13 @@ import com.example.mediaapp.models.Recommend
 import com.example.mediaapp.models.WatchlistMovie
 
 class RecommendationEngine(
-    private val databaseRepository: DatabaseRepository
+    private val databaseRepository: DatabaseRepository,
+    private val apiHandler: APIHandler = APIHandler()
 ) {
-    private val api = APIHandler()
+
     suspend fun generateMovieSuggestions(movieID: String) {
         Log.w("FUNCTION CALL", "generateMovieSuggestions()")
-        val response = api.getMovieSuggestions(movieID)
+        val response = apiHandler.getMovieSuggestions(movieID)
         val watchlist = databaseRepository.getWatchlistMovies()
         if (response != null && response.total_results > 0) {
             var i = 0

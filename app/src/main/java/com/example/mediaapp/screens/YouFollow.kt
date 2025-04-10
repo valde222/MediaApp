@@ -35,7 +35,6 @@ import com.example.mediaapp.R
 import com.example.mediaapp.ui.nav.TopNavBarB
 import com.example.mediaapp.ui.theme.MediaAppTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun YoufollowPageLayout(navController: NavController, drawerState: DrawerState){
     MediaAppTheme {
@@ -157,7 +156,6 @@ fun ProfileListItem(name: Int, iconColor: Int, followstatus: Boolean) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun searchBar(searchText: Int) {
     var text by remember { mutableStateOf("") }

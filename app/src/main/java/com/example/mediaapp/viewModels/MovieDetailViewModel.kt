@@ -20,11 +20,9 @@ import kotlinx.coroutines.launch
 class MovieDetailViewModel(
     private val databaseRepository: DatabaseRepository,
     private val recommendationEngine: RecommendationEngine,
-    private val ratingHandler: RatingHandler
+    private val ratingHandler: RatingHandler,
+    private val movieDetailRepo: MovieDetailRepo
 ) : ViewModel() {
-
-    private val apiHandler = APIHandler()
-    private val movieDetailRepo = MovieDetailRepo(apiHandler)
 
     private val _movieDetails = MutableStateFlow<TMDBMovieDetail?>(null)
     val movieDetails: StateFlow<TMDBMovieDetail?> = _movieDetails.asStateFlow()

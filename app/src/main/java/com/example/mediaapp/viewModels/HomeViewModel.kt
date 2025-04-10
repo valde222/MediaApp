@@ -15,9 +15,6 @@ class HomeViewModel(
     private val homeRepo: HomeRepo
 ): ViewModel() {
 
-    //private val apiHandler = APIHandler()
-    //private val algorithm = RecommendationEngine()
-
     //States for pager
     private val _popularMovies = MutableStateFlow<List<TMDBMovie>>(emptyList())
     val popularMovies: StateFlow<List<TMDBMovie>> = _popularMovies.asStateFlow()

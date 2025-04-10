@@ -1,7 +1,8 @@
 package com.example.mediaapp.backend.database
 
 import android.util.Log
-import com.example.mediaapp.backend.auth.AuthRepository // Import AuthRepository
+import com.example.mediaapp.backend.auth.AuthRepository
+import com.example.mediaapp.backend.auth.FirebaseAuthRepository
 import com.example.mediaapp.models.CurrentUser
 import com.example.mediaapp.models.RatingForDatabase
 import com.example.mediaapp.models.Recommend
@@ -14,12 +15,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class FirebaseDatabaseRepository(
     private val firestore: FirebaseFirestore = Firebase.firestore,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository = FirebaseAuthRepository()
 ) : DatabaseRepository {
-
 
     private var userCache: CurrentUser? = null
     private var watchListCache: List<WatchlistMovie>? = null

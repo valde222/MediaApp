@@ -82,16 +82,16 @@ import com.example.mediaapp.ui.StandardBoxInRowActors
 import com.example.mediaapp.ui.StandardBoxInRowCrew
 import com.gowtham.ratingbar.RatingBar
 import com.gowtham.ratingbar.RatingBarStyle
+import org.koin.compose.viewmodel.koinViewModel
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import kotlin.math.floor
 
 private const val baseURL = "https://image.tmdb.org/t/p/original"
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieDetailPage(
     movieId: String,
-    viewModel: MovieDetailViewModel = viewModel(),
+    viewModel: MovieDetailViewModel = koinViewModel(),
     navController: NavController,
     drawerState: DrawerState
 ) {

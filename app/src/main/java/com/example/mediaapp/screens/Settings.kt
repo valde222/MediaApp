@@ -26,7 +26,6 @@ import com.example.mediaapp.R
 import com.example.mediaapp.ui.nav.TopNavBarB
 import com.example.mediaapp.ui.theme.MediaAppTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingpageLayout(navController: NavController, drawerState: DrawerState) {
     MediaAppTheme {

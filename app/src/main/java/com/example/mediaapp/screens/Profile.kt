@@ -60,12 +60,13 @@ import com.example.mediaapp.ui.TabsAndFilters
 import com.example.mediaapp.ui.nav.TopNavBarA
 import com.example.mediaapp.ui.theme.MediaAppTheme
 import com.example.mediaapp.viewModels.CurrentUserViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ProfilePageLayout(
-    navController: NavController,
     drawerState: DrawerState,
-    viewModel: CurrentUserViewModel = viewModel()) {
+    viewModel: CurrentUserViewModel = koinViewModel()
+) {
 
     val currentUser by viewModel.currentUser.collectAsState()
 

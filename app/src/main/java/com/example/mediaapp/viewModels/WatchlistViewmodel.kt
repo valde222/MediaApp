@@ -13,7 +13,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class WatchlistViewModel(
-    private val databaseRepository: DatabaseRepository
+    private val databaseRepository: DatabaseRepository,
+    private val sortingHandler: SortingHandler
 ) : ViewModel() {
 
     private val _originalWatchlist = MutableStateFlow<List<WatchlistMovie>?>(null)
@@ -23,8 +24,6 @@ class WatchlistViewModel(
 
     private val _deleteview = MutableStateFlow(false)
     val deleteview: StateFlow<Boolean> = _deleteview.asStateFlow()
-
-    private val sortingHandler = SortingHandler()
 
     fun getWatchlistMovies() {
         viewModelScope.launch {

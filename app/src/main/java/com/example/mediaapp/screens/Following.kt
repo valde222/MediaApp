@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.mediaapp.ui.nav.TopNavBarA
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FollowingListPage(drawerState: DrawerState) {
 

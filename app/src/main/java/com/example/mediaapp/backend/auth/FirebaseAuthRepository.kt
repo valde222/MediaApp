@@ -9,11 +9,12 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 class FirebaseAuthRepository(
     private val firebaseAuth: FirebaseAuth = Firebase.auth,
-    private val databaseRepository: DatabaseRepository
-) : AuthRepository {
+) : AuthRepository, KoinComponent {
 
     override fun getAuthState(): Flow<AuthUser?> = callbackFlow {
         val authStateListener = FirebaseAuth.AuthStateListener { auth ->
@@ -50,7 +51,8 @@ class FirebaseAuthRepository(
                 firebaseUser.updateProfile(profileUpdates).await()
 
                 val userMap = createUserMap(username)
-                databaseRepository.updateUserProfile(firebaseUser.uid, userMap)
+                val databaseRepositoryInstance: DatabaseRepository = get()
+                databaseRepositoryInstance.updateUserProfile(firebaseUser.uid, userMap)
 
                 firebaseUser.toAuthUser()?.let {
                     AuthResult.Success(it)

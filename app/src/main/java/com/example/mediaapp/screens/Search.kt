@@ -1,6 +1,5 @@
 package com.example.mediaapp.screens
 
-import SearchViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -19,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.mediaapp.R
 import com.example.mediaapp.ui.SearchBar
@@ -27,11 +25,13 @@ import com.example.mediaapp.ui.SearchQueryLayout
 import com.example.mediaapp.ui.TabsAndFilters
 import com.example.mediaapp.ui.nav.TopNavBarA
 import com.example.mediaapp.ui.theme.MediaAppTheme
+import com.example.mediaapp.viewModels.SearchViewModel
+import org.koin.androidx.compose.koinViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchPage(viewModel: SearchViewModel = viewModel(), navController: NavController, drawerState: DrawerState) {
+fun SearchPage(viewModel: SearchViewModel = koinViewModel(), navController: NavController, drawerState: DrawerState) {
 
     val focusRequester = remember { FocusRequester() }
     val searchResults by viewModel.searchResults.collectAsState()
